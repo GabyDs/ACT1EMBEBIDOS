@@ -38,7 +38,7 @@ int main(void)
 
     // SALIDAS
     DDRC = 0xFF;
-    PORTC = 0xFF;
+    PINC = 0x00;
 
     EICRA |= (1 << ISC01); // set INT0 to trigger on ANY logic change
     EIMSK |= (1 << INT0);  // Turns on INT0
@@ -58,13 +58,13 @@ int main(void)
             {
                 if (!encendido)
                 {
-                    arranque_directo();
                     flag = 0;
+                    arranque_directo();
                 }
                 else
                 {
-                    apagado_directo();
                     flag = 0;
+                    apagado_directo();
                 }
             }
         }
@@ -77,10 +77,6 @@ int main(void)
             {
                 ciclar_tiempo();
             }
-            else
-            {
-                return 0;
-            }
         }
 
         // Si el pin de arranque suave esta en bajo, se arranca suave.
@@ -91,10 +87,6 @@ int main(void)
             if (!(PIND & (1 << PIND4)))
             {
                 arranque_suave();
-            }
-            else
-            {
-                return 0;
             }
         }
     }
@@ -140,27 +132,24 @@ void arranque_suave()
         // repetimos
         for (unsigned int j = 0; j < tiempo; j++)
         {
-            if (!flag)
-            {
-                // prendemos el led pwm
-                PORTC |= (1 << PORTC0);
-
-                for (unsigned int k = 0; k < i; k++)
-                {
-                    _delay_ms(1);
-                }
-
-                // apagamos el led pwm
-                PORTC &= ~(1 << PORTC0);
-
-                for (unsigned int k = 0; k <= (T - i); k++)
-                {
-                    _delay_ms(1);
-                }
-            }
-            else
+            if (flag)
             {
                 return;
+            }
+            // prendemos el led pwm
+            PORTC |= (1 << PORTC0);
+
+            for (unsigned int k = 0; k < i; k++)
+            {
+                _delay_ms(1);
+            }
+
+            // apagamos el led pwm
+            PORTC &= ~(1 << PORTC0);
+
+            for (unsigned int k = 0; k <= (T - i); k++)
+            {
+                _delay_ms(1);
             }
         }
         prender(i);
