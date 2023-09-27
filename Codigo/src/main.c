@@ -91,7 +91,7 @@ int main(void)
             if (!estado_cambio_tiempo)
             {
                 _delay_ms(6);
-                if (!estado_cambio_tiempo)
+                if (!estado_cambio_tiempo & !encendido)
                 {
                     ciclar_tiempo();
                 }
